@@ -5,12 +5,13 @@ import pandas as pd
 
 
 """Training Pipeline Constants"""
-TARGET_COLUMN_NAME = "Result"
+TARGET_COLUMN = "Result"
 PIPELINE_NAME = "NetwerkSecurityPipeline"
 ARTIFACTS_DIR = "Artifacts"
 FILE_NAME = "phisingData.csv"
 TRAIN_FILE_NAME = "train.csv"
 TEST_FILE_NAME = "test.csv"
+FILE_EXTENSION = ".csv"
 
 SCHEMA_FILE_NAME = "schema.yaml"
 SCHEMA_FILE_PATH = os.path.join("data_schema", "schema.yaml")
@@ -29,3 +30,22 @@ DATA_VALIDATION_VALID_DIR: str = "validated"
 DATA_VALIDATION_INVALID_DIR: str = "invalid"
 DATA_VALIDATION_DRIFT_REPORT_DIR: str = "drift_report"
 DATA_VALIDATION_DRIFT_REPORT_FILE_NAME: str = "report.yaml"
+
+PREPROCESSING_OBJECT_FILE_NAME = "preprocessing.pkl"
+
+
+"""Data Transformation Constants"""
+DATA_TRANSFORMATION_DIR_NAME: str = "data_transformation"
+DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR: str = "transformed"
+DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR: str = "transformed_object"
+
+## kkn imputer to replace nan values
+DATA_TRANSFORMATION_IMPUTER_PARAMS: dict = {
+    "missing_values": np.nan,
+    "n_neighbors": 3,
+    "weights": "uniform",
+}
+
+DATA_TRANSFORMATION_TRAIN_FILE_PATH: str = "train.npy"
+
+DATA_TRANSFORMATION_TEST_FILE_PATH: str = "test.npy"
