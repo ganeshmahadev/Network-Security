@@ -23,8 +23,14 @@ from sklearn.ensemble import (
 )
 import mlflow
 
-import dagshub
-dagshub.init(repo_owner='ganeshmahadev2463', repo_name='Network-Security', mlflow=True)
+try:
+    if not os.getenv('DISABLE_DAGSHUB'):
+        import dagshub
+        dagshub.init(repo_owner='ganeshmahadev2463', repo_name='Network-Security', mlflow=True)
+        logging.info("DagsHub initialized successfully")
+except Exception as e:
+    logging.warning(f"DagsHub initialization failed: {e}. Continuing without DagsHub.")
+
 
 class ModelTrainer:
     def __init__(self,model_trainer_config:ModelTrainerConfig,data_transformation_artifact:DataTransformationArtifact):
@@ -34,16 +40,25 @@ class ModelTrainer:
         except Exception as e:
             raise NetworkSecurityException(e,sys)
          
-    def track_mlflow(self,best_model,classificationmetric):
-        with mlflow.start_run():
+    def track_mlflow(self, best_model, classificationmetric):
+        """
+        Track metrics - simplified for production
+        """
+        try:
             f1_score = classificationmetric.f1_score
             precision_score = classificationmetric.precision_score
             recall_score = classificationmetric.recall_score
             
-            mlflow.log_param("model_type", type(best_model).__name__)
-            mlflow.log_metric("f1_score", f1_score)
-            mlflow.log_metric("precision_score", precision_score)
-            mlflow.log_metric("recall_score", recall_score)
+            # Just log the metrics instead of using MLflow in production
+            logging.info(f"=== MODEL PERFORMANCE ===")
+            logging.info(f"Model Type: {type(best_model).__name__}")
+            logging.info(f"F1 Score: {f1_score}")
+            logging.info(f"Precision: {precision_score}")
+            logging.info(f"Recall: {recall_score}")
+            logging.info(f"========================")
+            
+        except Exception as e:
+            logging.warning(f"Performance logging failed: {str(e)}")
             
     def train_model(self,X_train,y_train,x_test,y_test):
         models = {
