@@ -7,7 +7,6 @@ from networksecurity.logging.logger import logging
 from networksecurity.entity.artifact_entity import DataTransformationArtifact,ModelTrainerArtifact
 from networksecurity.entity.config_entity import ModelTrainerConfig
 
-
 from networksecurity.utils.ml_utils.model.estimator import NetworkModel
 from networksecurity.utils.main_utils.utils import save_object,load_object
 from networksecurity.utils.main_utils.utils import load_numpy_array_data,evaluate_models
@@ -24,6 +23,8 @@ from sklearn.ensemble import (
 )
 import mlflow
 
+import dagshub
+dagshub.init(repo_owner='ganeshmahadev2463', repo_name='Network-Security', mlflow=True)
 
 class ModelTrainer:
     def __init__(self,model_trainer_config:ModelTrainerConfig,data_transformation_artifact:DataTransformationArtifact):
@@ -39,7 +40,7 @@ class ModelTrainer:
             precision_score = classificationmetric.precision_score
             recall_score = classificationmetric.recall_score
             
-            mlflow.sklearn.log_model(best_model, "model")
+            mlflow.log_param("model_type", type(best_model).__name__)
             mlflow.log_metric("f1_score", f1_score)
             mlflow.log_metric("precision_score", precision_score)
             mlflow.log_metric("recall_score", recall_score)
