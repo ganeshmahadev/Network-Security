@@ -23,14 +23,6 @@ from sklearn.ensemble import (
 )
 import mlflow
 
-try:
-    if not os.getenv('DISABLE_DAGSHUB'):
-        import dagshub
-        dagshub.init(repo_owner='ganeshmahadev2463', repo_name='Network-Security', mlflow=True)
-        logging.info("DagsHub initialized successfully")
-except Exception as e:
-    logging.warning(f"DagsHub initialization failed: {e}. Continuing without DagsHub.")
-
 
 class ModelTrainer:
     def __init__(self,model_trainer_config:ModelTrainerConfig,data_transformation_artifact:DataTransformationArtifact):
