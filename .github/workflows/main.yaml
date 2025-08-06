@@ -42,6 +42,11 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Create ECR repository if not exists
+        run: |
+          aws ecr describe-repositories --repository-names ${{ secrets.ECR_REPOSITORY_NAME }} || \
+          aws ecr create-repository --repository-name ${{ secrets.ECR_REPOSITORY_NAME }} --image-scanning-configuration scanOnPush=true
+
       - name: Build, tag and push image to AWS ECR
         id: build-image
         env:
@@ -82,9 +87,10 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       
-      - name: Stop and remove container if running
+      - name: Stop and remove existing container
         run: |
-          docker ps -q --filter "name=networksecurity" | grep -q . && docker stop networksecurity && docker rm -fv networksecurity || echo "No container to stop"
+          # Force remove any existing container with this name
+          docker rm -f networksecurity 2>/dev/null || echo "No existing container to remove"
        
       - name: Pull latest images
         env:
@@ -106,7 +112,22 @@ jobs:
             -e 'MONGO_DB_URL=${{ secrets.MONGO_DB_URL }}' \
             $ECR_REGISTRY/$ECR_REPOSITORY:latest
             
+      - name: Verify deployment
+        run: |
+          # Wait a moment for container to start
+          sleep 10
+          
+          # Check if container is running
+          if docker ps | grep -q networksecurity; then
+            echo "✅ Container is running successfully"
+            docker ps --filter "name=networksecurity"
+          else
+            echo "❌ Container failed to start"
+            docker logs networksecurity || echo "No logs available"
+            exit 1
+          fi
+          
       - name: Clean previous images and containers
         run: |
+          # Clean up old/unused images and containers
           docker system prune -f
-          
