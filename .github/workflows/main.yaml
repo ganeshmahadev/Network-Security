@@ -63,8 +63,8 @@ jobs:
           
           echo "Image pushed to ECR with tags: $IMAGE_TAG and latest"
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-          
-    Continuous-Deployment:
+
+  Continuous-Deployment:  
     needs: build-and-push-ecr-image
     runs-on: self-hosted
     steps:
@@ -86,7 +86,6 @@ jobs:
         run: |
           docker ps -q --filter "name=networksecurity" | grep -q . && docker stop networksecurity && docker rm -fv networksecurity || echo "No container to stop"
        
-      # FIXED: Use same format as build job
       - name: Pull latest images
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -95,7 +94,6 @@ jobs:
           echo "Pulling image: $ECR_REGISTRY/$ECR_REPOSITORY:latest"
           docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest
          
-      # FIXED: Use same format as build job
       - name: Run Docker Image to serve users
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
