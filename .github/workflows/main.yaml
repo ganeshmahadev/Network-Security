@@ -1,0 +1,20 @@
+name: networksecurityworkflow
+
+on:
+  push:
+    branches:
+      - main
+  paths-ignore:
+    - README.md
+
+jobs:
+  integration:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Lint Code
+        run: echo "Linting repo"
+      - name: Run Unit Tests
+        run: echo "Running unit tests"
