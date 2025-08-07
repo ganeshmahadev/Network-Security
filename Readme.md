@@ -95,7 +95,7 @@ AWS_REGION="your_aws_region"
 To run the entire machine learning pipeline, from data ingestion to model training, execute the main application script:
 
 ```bash
-python main.py
+python app.py
 ```
 
 This will generate all the necessary artifacts, including the trained model (`model.pkl`) and the data transformation object (`preprocessing.pkl`).
